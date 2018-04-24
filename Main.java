@@ -6,12 +6,13 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class Main extends Application {
     static double width = 1000;
     static double height = 750;
-    static final int blockNumber = 7;
+    static final int blockNumber = 10;
     private static final int towerNumber = 3;
     static Block[] blocks = new Block[blockNumber];
     static Tower[] towers = new Tower[towerNumber];
@@ -28,6 +29,18 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
+        Text t = new Text(String.valueOf(commandsExecuted));
+        t.setLayoutX(200);
+        t.setLayoutY(10);
+        root.getChildren().add(t);
+
+        Button b = new Button("Move Stack");
+        b.setLayoutX(0);
+        b.setLayoutY(0);
+        root.getChildren().add(b);
+        b.setOnAction(actionEvent -> {
+            moveStack(0,1, blockNumber);
+        });
 
         for(int i = 0; i < towerNumber; ++i) {
             towers[i] = new Tower(i);
@@ -43,12 +56,6 @@ public class Main extends Application {
             e.printStackTrace();
         }
 
-        Button b = new Button("Move Stack");
-        root.getChildren().add(b);
-        b.setOnAction(actionEvent -> {
-            moveStack(0,1, blockNumber);
-        });
-
         canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, mouseEvent -> {
             addCommand("moveBlock(0,1)");
         });
@@ -60,7 +67,7 @@ public class Main extends Application {
                 for(Tower t : towers) {
                     t.draw(gc);
                 }
-                System.out.println(commandsExecuted);
+                t.setText(String.valueOf(commandsExecuted));
             }
         }.start();
     }
@@ -86,7 +93,7 @@ public class Main extends Application {
     }
 
     public static void executeCommand() {
-        String command = null;
+        String command;
         if(commandQueue.contains(";")) {
             command = commandQueue.substring(0,commandQueue.indexOf(";"));
         } else {
@@ -99,7 +106,7 @@ public class Main extends Application {
             commandsExecuted++;
         }
         try {
-            Thread.sleep(300);
+            Thread.sleep(20);
         } catch(InterruptedException e) {
             e.printStackTrace();
         }
